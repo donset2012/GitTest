@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using System.IO;
 
 namespace TestingWebsite
 {
@@ -14,22 +15,33 @@ namespace TestingWebsite
     {
         public static void Main(string[] args)
         {
+            Logger.InitLogger();
             IWebDriver driver;
+            Logger.Log.Info("Launched Browser Chrome");
             driver = new ChromeDriver();
             driver.Manage().Window.Maximize();
+            Logger.Log.Info("Going to URL http://prestashop-automation.qatestlab.com.ua/ru/");
             driver.Navigate().GoToUrl("http://prestashop-automation.qatestlab.com.ua/ru/");
+            Logger.Log.Info("Check of the currency");
             Check check = new Check();
             Check.CheckCurrency(driver);
+            Logger.Log.Info("Click on the USD button");
             Navigate navigate = new Navigate();
             Navigate.ClickUSD(driver);
+            Logger.Log.Info("Search for the stuff by entering 'dress.' in the search field");
             Navigate.Search(driver);
             System.Threading.Thread.Sleep(2 * 1000);
-            Check.CheckGoods(driver);
+            Logger.Log.Info("Check of the stuff");
+            Check.CheckStuff(driver);
+            Logger.Log.Info("Check of the price in USD");
             Check.CheckPriceUSD(driver);
             System.Threading.Thread.Sleep(1 * 1000);
+            Logger.Log.Info("Sort by price from high to low");
             Navigate.Sort(driver);
             System.Threading.Thread.Sleep(1 * 1000);
+            Logger.Log.Info("Check sort");
             Check.CheckSort(driver);
+            Logger.Log.Info("Check discount");
             Check.CheckDiscount(driver);
         }
     }
@@ -58,15 +70,15 @@ namespace TestingWebsite
             }
             Console.WriteLine("\r\n");
         }
-        public static void CheckGoods(IWebDriver driver)
+        public static void CheckStuff(IWebDriver driver)
         {
-            string goods = driver.FindElements(By.ClassName("thumbnail-container")).Count.ToString();
-            string goods2 = driver.FindElement(By.XPath(@".//section[1]/section[1]/div[1]/div[1]/div[1]/p[1]")).Text;
-            goods2 = Regex.Replace(goods2, @"\D", "", RegexOptions.Compiled);
-            goods2 = goods2.Trim();
-            if (goods == goods2)
+            string stuff = driver.FindElements(By.ClassName("thumbnail-container")).Count.ToString();
+            string stuff2 = driver.FindElement(By.XPath(@".//section[1]/section[1]/div[1]/div[1]/div[1]/p[1]")).Text;
+            stuff2 = Regex.Replace(stuff2, @"\D", "", RegexOptions.Compiled);
+            stuff2 = stuff2.Trim();
+            if (stuff == stuff2)
             {
-                Console.WriteLine("Товаров: " + goods + "\r\n");
+                Console.WriteLine("Товаров: " + stuff + "\r\n");
             }
             else
             {
@@ -75,10 +87,10 @@ namespace TestingWebsite
         }
         public static void CheckPriceUSD(IWebDriver driver)
         {
-                string Currency = driver.FindElement(By.XPath(@".//div[2]/div[2]/div[1]/span[2]")).Text;
-                Currency = Regex.Replace(Currency, @"\w", "", RegexOptions.Compiled);
-                Currency = Currency.Trim();
-         
+            string Currency = driver.FindElement(By.XPath(@".//div[2]/div[2]/div[1]/span[2]")).Text;
+            Currency = Regex.Replace(Currency, @"\w", "", RegexOptions.Compiled);
+            Currency = Currency.Trim();
+
             List<IWebElement> a = driver.FindElements(By.ClassName("price")).ToList();
             for (int i = 0; i < a.Count; i++)
             {
@@ -203,5 +215,14 @@ namespace TestingWebsite
             sort.Click();
         }
     }
+    public class Log
+    {
+        public static void SaveToLog(string message)
+        {
+            var writer = new StreamWriter(@"D:\C# Проекты\TestingWebsite\123.log", true);
+            writer.WriteLine(DateTime.Now + " : " + message);
+            writer.Close();
+        }
+    }
+    
 }
-
