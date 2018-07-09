@@ -79,12 +79,12 @@ namespace TestingWebsite
             stuff2 = stuff2.Trim();
             if (stuff == stuff2)
             {
-                Console.WriteLine("Товаров: " + stuff + "\r\n");
+                Console.WriteLine("Товаров: " + stuff + " - True" + "\r\n");
             }
             else
             {
-                Console.WriteLine("Can't check goods" + "\r\n");
-                Logger.Log.Warn("Can't check goods");
+                Console.WriteLine("Can't check the stuff" + "\r\n");
+                Logger.Log.Warn("Can't check the stuff");
             }
         }
         public static void CheckPriceUSD(IWebDriver driver)
@@ -180,9 +180,13 @@ namespace TestingWebsite
                         {
                             Console.WriteLine("Цена товара: " + regular_price + " скидка: " + discount + "%" + " скидочная цена: " + calculate);
                         }
-                        else { Console.WriteLine("Discount displayed incorrectly"); }
-                        Logger.Log.Warn("Discount displayed incorrectly");
+                        else
+                        {
+                            Console.WriteLine("Discount displayed incorrectly");
+                            Logger.Log.Warn("Discount displayed incorrectly");
+                        }
                     }
+                    
 
                 }
                 catch { }
