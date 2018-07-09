@@ -61,11 +61,12 @@ namespace TestingWebsite
                 s = s.Trim(',', ' ');
                 if (s == Currency)
                 {
-                    Console.WriteLine("Checked currency of the " + (i + 1) + " stuff");
+                    Console.WriteLine("Checked the currency of the " + (i + 1) + " stuff");
                 }
                 else
                 {
                     Console.WriteLine("Not Checked");
+                    Logger.Log.Warn("Can't check the currency");
                 }
             }
             Console.WriteLine("\r\n");
@@ -83,6 +84,7 @@ namespace TestingWebsite
             else
             {
                 Console.WriteLine("Can't check goods" + "\r\n");
+                Logger.Log.Warn("Can't check goods");
             }
         }
         public static void CheckPriceUSD(IWebDriver driver)
@@ -104,6 +106,7 @@ namespace TestingWebsite
                 else
                 {
                     Console.WriteLine("The currency doesn't match");
+                    Logger.Log.Warn("The currency doesn't match");
                 }
             }
             Console.WriteLine("\r\n");
@@ -143,6 +146,7 @@ namespace TestingWebsite
                 else
                 {
                     Console.WriteLine(bigger.ToString("0.00") + " >= " + smaller.ToString("0.00") + " = " + "Bad");
+                    Logger.Log.Warn("Failed to check the sorting");
                 }
             }
             Console.WriteLine("\r\n");
@@ -176,7 +180,8 @@ namespace TestingWebsite
                         {
                             Console.WriteLine("Цена товара: " + regular_price + " скидка: " + discount + "%" + " скидочная цена: " + calculate);
                         }
-                        else { Console.WriteLine("Скидка отображается неверно"); }
+                        else { Console.WriteLine("Discount displayed incorrectly"); }
+                        Logger.Log.Warn("Discount displayed incorrectly");
                     }
 
                 }
@@ -190,39 +195,51 @@ namespace TestingWebsite
     {
         public static void ClickUSD(IWebDriver driver)
         {
-            IWebElement usd;
-            usd = driver.FindElement(By.XPath(@".//div[2]/div[2]/div[1]/a[1]"));
-            usd.Click();
-            System.Threading.Thread.Sleep(2 * 1000);
-            usd = driver.FindElement(By.LinkText("USD $"));
-            usd.Click();
+            try
+            {
+                IWebElement usd;
+                usd = driver.FindElement(By.XPath(@".//div[2]/div[2]/div[1]/a[1]"));
+                usd.Click();
+                System.Threading.Thread.Sleep(2 * 1000);
+                usd = driver.FindElement(By.LinkText("USD $"));
+                usd.Click();
+            }
+            catch
+            {
+                Logger.Log.Error("Failed to click on the element USD $");
+            }
         }
         public static void Search(IWebDriver driver)
         {
-            IWebElement search;
-            search = driver.FindElement(By.ClassName("ui-autocomplete-input"));
-            search.Click();
-            System.Threading.Thread.Sleep(2 * 1000);
-            search.SendKeys("dress.");
-            search.Submit();
+            try
+            {
+                IWebElement search;
+                search = driver.FindElement(By.ClassName("ui-autocomplete-input"));
+                search.Click();
+                System.Threading.Thread.Sleep(2 * 1000);
+                search.SendKeys("dress.");
+                search.Submit();
+            }
+            catch
+            {
+                Logger.Log.Error("Failed to search");
+
+            }
         }
         public static void Sort(IWebDriver driver)
         {
-            IWebElement sort = driver.FindElement(By.XPath(@".//section[1]/div[1]/div[1]/section[1]/section[1]/div[1]/div[1]/div[2]/div[1]/div[1]/a[1]"));
-            sort.Click();
-            System.Threading.Thread.Sleep(1 * 1000);
-            sort = driver.FindElement(By.XPath(@".//section[1]/div[1]/div[1]/section[1]/section[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/a[5]"));
-            sort.Click();
+            try
+            {
+                IWebElement sort = driver.FindElement(By.XPath(@".//section[1]/div[1]/div[1]/section[1]/section[1]/div[1]/div[1]/div[2]/div[1]/div[1]/a[1]"));
+                sort.Click();
+                System.Threading.Thread.Sleep(1 * 1000);
+                sort = driver.FindElement(By.XPath(@".//section[1]/div[1]/div[1]/section[1]/section[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/a[5]"));
+                sort.Click();
+            }
+            catch
+            {
+                Logger.Log.Error("Failed to sort");
+            }
         }
     }
-    public class Log
-    {
-        public static void SaveToLog(string message)
-        {
-            var writer = new StreamWriter(@"D:\C# Проекты\TestingWebsite\123.log", true);
-            writer.WriteLine(DateTime.Now + " : " + message);
-            writer.Close();
-        }
-    }
-    
 }
