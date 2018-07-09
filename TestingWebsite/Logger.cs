@@ -8,6 +8,7 @@ using log4net.Config;
 
 namespace TestingWebsite
 {
+    //Log
     public static class Logger
     {
         private static ILog log = LogManager.GetLogger("LOGGER");
